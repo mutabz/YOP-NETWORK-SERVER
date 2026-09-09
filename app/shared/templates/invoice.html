@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>
+        Invoice {{ invoice.invoice_number }}
+    </title>
+
+    <style>
+
+        @page {
+            size: A4;
+            margin: 18mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #333;
+            margin: 0;
+            line-height: 1.45;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        p {
+            margin: 0;
+        }
+
+        /* =====================================================
+           WATERMARK
+        ===================================================== */
+
+        .watermark {
+            position: fixed;
+            top: 45%;
+            left: 50%;
+
+            transform:
+                translate(-50%, -50%)
+                rotate(-35deg);
+
+            font-size: 90px;
+            font-weight: bold;
+            letter-spacing: 8px;
+
+            z-index: -1;
+            opacity: .07;
+        }
+
+        .watermark.paid {
+            color: #16a34a;
+        }
+
+        .watermark.draft {
+            color: #2563eb;
+        }
+
+        .watermark.cancelled {
+            color: #dc2626;
+        }
+
+        .watermark.overdue {
+            color: #ea580c;
+        }
+
+        .watermark.unpaid {
+            color: #ea580c;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+            display: table;
+            width: 100%;
+
+            border-bottom: 2px solid #2c3e50;
+
+            padding-bottom: 15px;
+            margin-bottom: 22px;
+        }
+
+        .header-left,
+        .header-right {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .header-left {
+            width: 55%;
+        }
+
+        .header-right {
+            width: 45%;
+            text-align: right;
+        }
+
+        .logo {
+            width: 110px;
+            height: 90px;
+
+            border: 1px dashed #bbb;
+
+            display: table-cell;
+            vertical-align: middle;
+
+            text-align: center;
+
+            color: #888;
+            font-size: 13px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .company {
+            display: inline-block;
+            vertical-align: top;
+
+            margin-left: 15px;
+
+            text-align: left;
+        }
+
+        .company h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .company-meta {
+            color: #666;
+            font-size: 11px;
+        }
+
+        /* =====================================================
+           INVOICE TITLE
+        ===================================================== */
+
+        .invoice-title {
+            display: table;
+            width: 100%;
+
+            margin-bottom: 22px;
+        }
+
+        .invoice-title-left,
+        .invoice-title-right {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .invoice-title-left {
+            width: 65%;
+        }
+
+        .invoice-title-right {
+            width: 35%;
+            text-align: right;
+        }
+
+        .invoice-title h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        .invoice-number {
+            margin-top: 4px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .status {
+            display: inline-block;
+
+            padding: 6px 14px;
+
+            border-radius: 4px;
+
+            background: #e8f5e9;
+            color: #166534;
+
+            font-weight: bold;
+            font-size: 11px;
+
+            text-transform: uppercase;
+        }
+
+        /* =====================================================
+           INFORMATION CARDS
+        ===================================================== */
+
+        .info {
+            display: table;
+            width: 100%;
+
+            margin-bottom: 25px;
+        }
+
+        .card {
+            display: table-cell;
+
+            width: 50%;
+
+            border: 1px solid #ddd;
+
+            padding: 12px;
+
+            vertical-align: top;
+        }
+
+        .card:first-child {
+            margin-right: 10px;
+        }
+
+        .card h3 {
+            color: #2c3e50;
+
+            font-size: 13px;
+
+            margin-bottom: 9px;
+
+            border-bottom: 1px solid #ddd;
+
+            padding-bottom: 6px;
+        }
+
+        .card-content {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* =====================================================
+           ITEMS TABLE
+        ===================================================== */
+
+        table.items {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 10px;
+        }
+
+        .items thead {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .items th {
+            padding: 8px;
+
+            text-align: left;
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+        }
+
+        .items td {
+            padding: 8px;
+
+            border-bottom: 1px solid #ddd;
+
+            vertical-align: top;
+        }
+
+        .items tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .text-right {
+            text-align: right !important;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        .empty-items {
+            text-align: center;
+
+            padding: 20px;
+
+            color: #888;
+        }
+
+        /* =====================================================
+           TOTALS
+        ===================================================== */
+
+        .totals {
+            width: 320px;
+
+            margin-left: auto;
+
+            margin-top: 22px;
+        }
+
+        table.totals-table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            border: none;
+
+            padding: 6px 8px;
+        }
+
+        .totals-table .label {
+            color: #555;
+        }
+
+        .grand {
+            background: #2c3e50;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+        }
+
+        .grand td {
+            padding: 10px 8px;
+        }
+
+        /* =====================================================
+           NOTES / TERMS
+        ===================================================== */
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+
+            font-size: 13px;
+
+            margin-bottom: 7px;
+
+            border-bottom: 1px solid #ddd;
+
+            padding-bottom: 5px;
+        }
+
+        .section p {
+            color: #555;
+
+            white-space: pre-line;
+        }
+
+        /* =====================================================
+           SIGNATURES
+        ===================================================== */
+
+        .signature {
+            display: table;
+            width: 100%;
+
+            margin-top: 60px;
+        }
+
+        .sign {
+            display: table-cell;
+
+            width: 33.33%;
+
+            text-align: center;
+
+            padding: 0 20px;
+        }
+
+        .line {
+            border-top: 1px solid #555;
+
+            margin-bottom: 8px;
+        }
+
+        .sign-label {
+            font-size: 11px;
+            color: #555;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            margin-top: 35px;
+
+            border-top: 1px solid #ccc;
+
+            padding-top: 12px;
+
+            text-align: center;
+
+            font-size: 10px;
+
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         STATUS WATERMARK
+    ====================================================== -->
+
+    <div class="watermark {{ invoice.status.value|lower }}">
+        {{ invoice.status.value|upper }}
+    </div>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="header">
+
+        <div class="header-left">
+
+            <div class="logo">
+
+                {% if company.logo %}
+
+                    <img
+                        src="{{ company.logo }}"
+                        alt="{{ company.name or 'Company Logo' }}"
+                    >
+
+                {% else %}
+
+                    LOGO
+
+                {% endif %}
+
+            </div>
+
+            <div class="company">
+
+                <h2>
+                    {{ company.name or "-" }}
+                </h2>
+
+                <div class="company-meta">
+
+                    {% if company.address %}
+                        {{ company.address }}<br>
+                    {% endif %}
+
+                    {% if company.phone %}
+                        {{ company.phone }}<br>
+                    {% endif %}
+
+                    {% if company.email %}
+                        {{ company.email }}<br>
+                    {% endif %}
+
+                    {% if company.website %}
+                        {{ company.website }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <strong>
+                INVOICE
+            </strong>
+
+            <br>
+
+            {{ invoice.invoice_number }}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INVOICE TITLE
+    ====================================================== -->
+
+    <div class="invoice-title">
+
+        <div class="invoice-title-left">
+
+            <h1>
+                INVOICE
+            </h1>
+
+            <div class="invoice-number">
+
+                Invoice No:
+                <strong>
+                    {{ invoice.invoice_number }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="invoice-title-right">
+
+            <div class="status">
+
+                {{ invoice.status.value|upper }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BILL TO / INVOICE DETAILS
+    ====================================================== -->
+
+    <div class="info">
+
+
+        <!-- CUSTOMER -->
+
+        <div class="card">
+
+            <h3>
+                Bill To
+            </h3>
+
+            <div class="card-content">
+
+                <strong>
+                    {{ customer.name or invoice.customer_name or "-" }}
+                </strong>
+
+                <br>
+
+                {% if customer.address %}
+                    {{ customer.address }}<br>
+                {% endif %}
+
+                {% if customer.phone or invoice.customer_phone %}
+                    {{ customer.phone or invoice.customer_phone }}<br>
+                {% endif %}
+
+                {% if customer.email or invoice.customer_email %}
+                    {{ customer.email or invoice.customer_email }}<br>
+                {% endif %}
+
+                {% if customer.tin or invoice.customer_tin %}
+
+                    <span class="label">
+                        TIN:
+                    </span>
+
+                    {{ customer.tin or invoice.customer_tin }}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- INVOICE DETAILS -->
+
+        <div class="card">
+
+            <h3>
+                Invoice Details
+            </h3>
+
+            <div class="card-content">
+
+                <span class="label">
+                    Issue Date:
+                </span>
+
+                {{ invoice.issue_date or "-" }}
+
+                <br>
+
+
+                <span class="label">
+                    Due Date:
+                </span>
+
+                {{ invoice.due_date or "-" }}
+
+                <br>
+
+
+                <span class="label">
+                    Currency:
+                </span>
+
+                {{ invoice.currency or "-" }}
+
+                <br>
+
+
+                <span class="label">
+                    Type:
+                </span>
+
+                {{ invoice.invoice_type.value|upper }}
+
+                {% if invoice.description %}
+
+                    <br>
+
+                    <span class="label">
+                        Description:
+                    </span>
+
+                    {{ invoice.description }}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INVOICE ITEMS
+    ====================================================== -->
+
+    <table class="items">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    #
+                </th>
+
+                <th>
+                    SKU
+                </th>
+
+                <th>
+                    Description
+                </th>
+
+                <th class="text-right">
+                    Qty
+                </th>
+
+                <th>
+                    Unit
+                </th>
+
+                <th class="text-right">
+                    Unit Price
+                </th>
+
+                <th class="text-right">
+                    Discount
+                </th>
+
+                <th class="text-right">
+                    Tax
+                </th>
+
+                <th class="text-right">
+                    Amount
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% if invoice.items %}
+
+                {% for item in invoice.items %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.line_number }}
+                        </td>
+
+                        <td>
+                            {{ item.sku or "-" }}
+                        </td>
+
+                        <td>
+                            {{ item.description or "-" }}
+                        </td>
+
+                        <td class="text-right">
+                            {{ item.quantity|currency }}
+                        </td>
+
+                        <td>
+                            {{ item.unit or "-" }}
+                        </td>
+
+                        <td class="text-right">
+                            {{ item.unit_price|currency }}
+                        </td>
+
+                        <td class="text-right">
+                            {{ item.discount_amount|currency }}
+                        </td>
+
+                        <td class="text-right">
+                            {{ item.tax_amount|currency }}
+                        </td>
+
+                        <td class="text-right">
+                            {{ item.total|currency }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="empty-items"
+                    >
+                        No invoice items.
+                    </td>
+
+                </tr>
+
+            {% endif %}
+
+        </tbody>
+
+    </table>
+
+
+    <!-- =====================================================
+         TOTALS
+    ====================================================== -->
+
+    <div class="totals">
+
+        <table class="totals-table">
+
+            <tr>
+
+                <td class="label">
+                    Subtotal
+                </td>
+
+                <td class="text-right">
+                    {{ invoice.subtotal|currency }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td class="label">
+                    Discount
+                </td>
+
+                <td class="text-right">
+                    {{ invoice.discount_amount|currency }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td class="label">
+                    Tax
+                </td>
+
+                <td class="text-right">
+                    {{ invoice.tax_amount|currency }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td class="label">
+                    Paid
+                </td>
+
+                <td class="text-right">
+                    {{ invoice.paid_amount|currency }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td class="label">
+                    Balance
+                </td>
+
+                <td class="text-right">
+                    {{ invoice.balance_amount|currency }}
+                </td>
+
+            </tr>
+
+
+            <tr class="grand">
+
+                <td>
+                    Total
+                </td>
+
+                <td class="text-right">
+                    {{ invoice.total_amount|currency }}
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <!-- =====================================================
+         NOTES
+    ====================================================== -->
+
+    {% if invoice.notes %}
+
+        <div class="section">
+
+            <h3>
+                Notes
+            </h3>
+
+            <p>
+                {{ invoice.notes }}
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         TERMS
+    ====================================================== -->
+
+    {% if invoice.terms_and_conditions %}
+
+        <div class="section">
+
+            <h3>
+                Terms &amp; Conditions
+            </h3>
+
+            <p>
+                {{ invoice.terms_and_conditions }}
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         SIGNATURES
+    ====================================================== -->
+
+    <div class="signature">
+
+        <div class="sign">
+
+            <div class="line"></div>
+
+            <div class="sign-label">
+                Prepared By
+            </div>
+
+        </div>
+
+
+        <div class="sign">
+
+            <div class="line"></div>
+
+            <div class="sign-label">
+                Approved By
+            </div>
+
+        </div>
+
+
+        <div class="sign">
+
+            <div class="line"></div>
+
+            <div class="sign-label">
+                Customer Signature
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div class="footer">
+
+        Generated on
+        {{ invoice.generated_at or "-" }}
+
+        {% if company.name %}
+
+            •
+            {{ company.name }}
+
+        {% endif %}
+
+        {% if company.website %}
+
+            •
+            {{ company.website }}
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

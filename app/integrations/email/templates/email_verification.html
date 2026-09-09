@@ -1,0 +1,130 @@
+<!--
+code: EMAIL_VERIFICATION
+name: Email Verification
+description: Email verification message containing a verification link.
+source_module: SYSTEM
+email_type: TRANSACTIONAL
+subject: Verify your email address
+category: Authentication
+tags:
+  system: true
+  authentication: true
+variables:
+  user: {}
+  company: {}
+  verification_url: ""
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email</title>
+</head>
+
+<body style="margin:0; padding:0; background:#f4f6f8; font-family:Arial,Helvetica,sans-serif; color:#1f2937;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6f8; padding:40px 15px;">
+<tr>
+<td align="center">
+
+<table width="100%" cellpadding="0" cellspacing="0"
+       style="max-width:620px; background:#ffffff; border-radius:12px; overflow:hidden;">
+
+    <tr>
+        <td style="background:#111827; padding:28px 35px; text-align:center;">
+            <div style="font-size:24px; font-weight:bold; color:#ffffff;">
+                {{ company.name }}
+            </div>
+
+            <div style="font-size:13px; color:#d1d5db; margin-top:6px;">
+                Email Verification
+            </div>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding:40px 35px;">
+
+            <div style="text-align:center; margin-bottom:25px;">
+                <div style="
+                    display:inline-block;
+                    width:56px;
+                    height:56px;
+                    line-height:56px;
+                    border-radius:50%;
+                    background:#ecfdf5;
+                    color:#059669;
+                    font-size:26px;
+                ">
+                    ✓
+                </div>
+            </div>
+
+            <h1 style="margin:0 0 18px; text-align:center; font-size:26px; color:#111827;">
+                Verify your email
+            </h1>
+
+            <p style="font-size:16px; line-height:1.7; color:#4b5563;">
+                Hello {{ user.name }},
+            </p>
+
+            <p style="font-size:15px; line-height:1.7; color:#4b5563;">
+                Please verify your email address to complete your account setup.
+            </p>
+
+            <div style="text-align:center; margin:30px 0;">
+                <a href="{{ verification_url }}"
+                   style="
+                   display:inline-block;
+                   background:#111827;
+                   color:#ffffff;
+                   text-decoration:none;
+                   padding:14px 28px;
+                   border-radius:7px;
+                   font-size:15px;
+                   font-weight:bold;
+                   ">
+                    Verify Email Address
+                </a>
+            </div>
+
+            <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:18px;">
+                <p style="margin:0; font-size:13px; color:#6b7280; line-height:1.6;">
+                    If the button doesn't work, copy and paste the verification
+                    link into your browser.
+                </p>
+
+                <p style="margin:10px 0 0; font-size:12px; color:#9ca3af; word-break:break-all;">
+                    {{ verification_url }}
+                </p>
+            </div>
+
+            <p style="margin-top:25px; font-size:14px; color:#6b7280; line-height:1.6;">
+                If you didn't create this account, you can safely ignore this email.
+            </p>
+
+        </td>
+    </tr>
+
+    <tr>
+        <td style="background:#f9fafb; padding:22px 35px; text-align:center; border-top:1px solid #e5e7eb;">
+            <div style="font-size:13px; color:#6b7280;">
+                © {{ company.name }}
+            </div>
+
+            <div style="font-size:12px; color:#9ca3af; margin-top:6px;">
+                Automated message from {{ company.name }}
+            </div>
+        </td>
+    </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

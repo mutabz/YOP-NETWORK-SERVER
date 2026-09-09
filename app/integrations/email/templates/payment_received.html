@@ -1,0 +1,105 @@
+<!--
+code: PAYMENT_RECEIVED
+name: Payment Received
+description: Notification sent when a payment is successfully received.
+source_module: FINANCE
+email_type: NOTIFICATION
+subject: Payment received
+category: Payments
+tags:
+  system: true
+  payment: true
+variables:
+  customer: {}
+  company: {}
+  payment: {}
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Received</title>
+</head>
+
+<body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 15px;background:#f4f6f8;">
+<tr><td align="center">
+
+<table width="100%" cellpadding="0" cellspacing="0"
+style="max-width:620px;background:#fff;border-radius:12px;overflow:hidden;">
+
+<tr>
+<td style="background:#111827;padding:28px;text-align:center;">
+<strong style="font-size:24px;color:#fff;">{{ company.name }}</strong>
+</td>
+</tr>
+
+<tr>
+<td style="padding:40px 35px;">
+
+<div style="text-align:center;">
+<div style="display:inline-block;width:60px;height:60px;line-height:60px;border-radius:50%;background:#ecfdf5;color:#059669;font-size:28px;">
+✓
+</div>
+</div>
+
+<h1 style="text-align:center;color:#111827;font-size:26px;margin:20px 0;">
+Payment Received
+</h1>
+
+<p style="font-size:15px;line-height:1.7;color:#4b5563;">
+Hello {{ customer.name }},
+</p>
+
+<p style="font-size:15px;line-height:1.7;color:#4b5563;">
+We have successfully received your payment.
+</p>
+
+<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin:25px 0;">
+
+{% if payment.reference %}
+<p style="margin:0 0 10px;color:#6b7280;font-size:13px;">
+Reference:
+<strong style="color:#111827;">{{ payment.reference }}</strong>
+</p>
+{% endif %}
+
+{% if payment.amount %}
+<p style="margin:0 0 10px;color:#6b7280;font-size:13px;">
+Amount:
+<strong style="color:#111827;font-size:18px;">{{ payment.amount }}</strong>
+</p>
+{% endif %}
+
+{% if payment.date %}
+<p style="margin:0;color:#6b7280;font-size:13px;">
+Date:
+<strong style="color:#111827;">{{ payment.date }}</strong>
+</p>
+{% endif %}
+
+</div>
+
+<p style="font-size:14px;color:#6b7280;">
+Thank you for your payment.
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="background:#f9fafb;padding:22px;text-align:center;border-top:1px solid #e5e7eb;">
+<span style="font-size:13px;color:#6b7280;">© {{ company.name }}</span>
+</td>
+</tr>
+
+</table>
+
+</td></tr>
+</table>
+
+</body>
+</html>

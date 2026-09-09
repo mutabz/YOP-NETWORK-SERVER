@@ -1,0 +1,154 @@
+postgresql://root_user:3ru9MgrdE9eoxfmKMUffa3dt8XF2cAEJ@dpg-dagq6d1t0dsc73a831f0-a/yop_network_db
+
+app/
+├── api/
+│   └── v2/
+│       ├── router.py
+│       └── opportunities.py
+│
+├── core/
+│   ├── config.py
+│   ├── database.py
+│   ├── celery_app.py
+│   └── ...
+│
+├── modules/
+│   └── opportunities/
+│       │
+│       ├── models/
+│       │   ├── opportunity.py
+│       │   └── source.py
+│       │
+│       ├── schemas/
+│       │   ├── opportunity.py
+│       │   └── source.py
+│       │
+│       ├── repositories/
+│       │   ├── opportunity.py
+│       │   └── source.py
+│       │
+│       ├── services/
+│       │   ├── opportunity.py
+│       │   └── source.py
+│       │
+|		|__resources/
+			opportunity.py
+			source.py
+			
+│       ├── scraper/
+│       │   ├── base.py
+│       │   ├── runner.py
+│       │   │
+│       │   ├── sources/
+│       │   │   ├── source_a.py
+│       │   │   ├── source_b.py
+│       │   │   └── source_c.py
+│       │   │
+│       │   ├── normalizer.py
+│       │   └── deduplicator.py
+│       │
+│       └── enums.py
+│
+├── tasks/
+│   └── scraper/
+│       └── scraper_tasks.py
+│
+└── ...
+
+
+scraper/
+│
+├── core/
+│   ├── __init__.py
+│   │
+│   ├── contracts/
+│   │   ├── __init__.py
+│   │   ├── source.py
+│   │   ├── parser.py
+│   │   ├── mapper.py
+│   │   └── fetcher.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── raw_opportunity.py
+│   │   ├── mapped_opportunity.py
+│   │   └── sitemap.py
+│   │
+│   ├── sitemap/
+│   │   ├── __init__.py
+│   │   ├── parser.py
+│   │   └── service.py
+│   │
+│   ├── http/
+│   │   ├── __init__.py
+│   │   ├── client.py
+│   │   └── exceptions.py
+│   │
+│   └── exceptions/
+│       ├── __init__.py
+│       └── scraper.py
+│
+├── scholarships_ads/
+│   ├── __init__.py
+│   ├── source.py
+│   ├── parser.py
+│   ├── mapper.py
+│   └── selectors.py
+│
+├── indeed/
+│   ├── __init__.py
+│   ├── source.py
+│   ├── parser.py
+│   ├── mapper.py
+│   └── selectors.py
+│
+├── ...
+│
+└── registry.py
+
+scraper/
+├── core/
+│   ├── models/
+│   ├── sitemap/
+│   └── http/
+│
+└── scholarships_ads/
+    ├── source.py
+    ├── parser.py
+    ├── mapper.py
+    └── selectors.py
+
+scraper/
+│
+├── core/
+│   ├── __init__.py
+│   │
+│   ├── bases/
+│   │   ├── __init__.py
+│   │   ├── source.py
+│   │   ├── parser.py
+│   │   ├── mapper.py
+│   │   └── fetcher.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── raw_opportunity.py
+│   │   ├── mapped_opportunity.py
+│   │   └── sitemap.py
+│   │
+│   ├── sitemap/
+│   │   ├── __init__.py
+│   │   ├── parser.py
+│   │   └── service.py
+│   │
+│   └── http/
+│       ├── __init__.py
+│       ├── client.py
+│       └── exceptions.py
+│
+└── scholarships_ads/
+    ├── __init__.py
+    ├── source.py
+    ├── parser.py
+    ├── mapper.py
+    └── selectors.py

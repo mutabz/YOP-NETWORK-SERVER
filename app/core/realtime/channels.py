@@ -1,0 +1,1 @@
+REALTIME_CHANNEL = "erp:realtime"
