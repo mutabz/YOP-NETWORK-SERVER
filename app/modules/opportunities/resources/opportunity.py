@@ -19,7 +19,9 @@ from app.modules.opportunities.schemas import (
     OpportunityCreate,
     OpportunityUpdate,
 )
-
+from app.modules.opportunities.tests.test1 import (
+    test_real_scholarships_ads_end_to_end,
+)
 
 router = APIRouter(prefix="/opportunities")
 
@@ -47,6 +49,14 @@ async def create_opportunity(
         **payload.model_dump()
     )
 
+@router.post("/scrape/scholarships-ads")
+async def run_scholarships_ads_test():
+    await test_real_scholarships_ads_end_to_end()
+
+    return {
+        "success": True,
+        "message": "ScholarshipsAds scraper test completed successfully",
+    }
 
 # =========================
 # LIST + SEARCH
