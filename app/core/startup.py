@@ -38,7 +38,7 @@ async def startup():
     # REDIS
     # =====================================
 
-    await redis_client.ping()
+    #await redis_client.ping()
 
     print("✅ PostgreSQL Ready")
     print("✅ System Bootstrap Complete")
